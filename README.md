@@ -163,14 +163,6 @@ Generate a secure JWT secret key and configure the expiration time in your `.env
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🐛 Issues
-
-If you encounter any issues or have suggestions, please file an issue on the [GitHub Issues](https://github.com/gourab8389/blog-author/issues) page.
-
 ## 📞 Support
 
 For support and questions, please contact the repository owner at [gourab8389](https://github.com/gourab8389).
