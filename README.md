@@ -162,11 +162,3 @@ Generate a secure JWT secret key and configure the expiration time in your `.env
 3. Commit your changes (`git commit -m 'Add some amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
-
-## 📞 Support
-
-For support and questions, please contact the repository owner at [gourab8389](https://github.com/gourab8389).
-
----
-
-**Happy Coding! 🎉**
