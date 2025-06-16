@@ -54,7 +54,7 @@ yarn install
 PORT=5001
 
 # Database Configuration (Neon PostgreSQL)
-DB_URL=postgresql:""
+DB_URL=""
 
 # Cloudinary Configuration
 CLOUD_NAME=""
