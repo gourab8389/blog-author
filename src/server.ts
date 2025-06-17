@@ -4,6 +4,7 @@ import { initDB } from "./schema/author.js";
 import blogRoutes from "./routes/blog.js";
 import { v2 as cloudinary } from "cloudinary";
 import { connectRabbitMQ } from "./utils/rabbitmq.js";
+import cors from "cors";
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ const port = process.env.PORT;
 const connectDB = initDB();
 
 app.use(express.json());
+app.use(cors());
 app.use("/api/v1", blogRoutes);
 
 connectDB.then(() => {
