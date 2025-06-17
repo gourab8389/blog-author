@@ -16,7 +16,7 @@ export const connectRabbitMQ = async () => {
 
     console.log("RabbitMQ connected successfully👌");
   } catch (error) {
-    console.log("Error connecting to RabbitMQ:", error);
+    console.error("Error connecting to RabbitMQ:", error);
   }
 };
 
