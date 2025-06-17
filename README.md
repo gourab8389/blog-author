@@ -113,11 +113,14 @@ AUTHOR/
 │   ├── utils/             # Utility functions
 │   │   ├── data-uri.ts    # Data URI conversion utilities
 │   │   ├── db.ts          # Database connection
+│   │   ├── rabbitmq.ts    # RabbitMQ message queue utilities
 │   │   └── try-catch.ts   # Error handling utilities
 │   └── server.ts          # Main server file
+├── .env                   # Environment variables
 ├── .gitignore            # Git ignore rules
 ├── package.json          # Project dependencies
 ├── package-lock.json     # Dependency lock file
+├── README.md             # Project documentation
 └── tsconfig.json         # TypeScript configuration
 ```
 
