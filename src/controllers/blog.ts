@@ -4,6 +4,7 @@ import { sql } from "../utils/db.js";
 import { invalidateCacheJob } from "../utils/rabbitmq.js";
 import { TryCatch } from "../utils/try-catch.js";
 import cloudinary from "cloudinary";
+import { GoogleGenAI } from "@google/genai";
 
 export const createBlog = TryCatch(async (req: AuthenticatedRequest, res) => {
   const { title, description, blogcontent, category } = req.body;
@@ -143,5 +144,49 @@ export const deleteBlog = TryCatch(async (req: AuthenticatedRequest, res) => {
   res.json({
     success: true,
     message: "Blog deleted successfully",
+  });
+});
+
+export const aiTitlerespose = TryCatch(async (req, res) => {
+  const { text } = req.body;
+
+  const prompt = `Correct the grammar of the following blog title and return only the corrected
+title without any additional text, formatting, or symbols: "${text}"`;
+
+  let result;
+
+  const ai = new GoogleGenAI({
+    apiKey: process.env.GEMINI_API_KEY,
+  });
+
+  async function generateTitle() {
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: prompt,
+    });
+
+    let rawtext = response.text;
+
+    if (!rawtext) {
+      res.status(400).json({
+        success: false,
+        message: "Failed to generate title",
+      });
+      return;
+    }
+
+    result = rawtext
+      .replace(/\*\*/g, "")
+      .replace(/[\r\n]+/g, "")
+      .replace(/[*_`~]/g, "")
+      .trim();
+  }
+
+  await generateTitle();
+
+  res.json({
+    success: true,
+    message: "Title generated successfully",
+    title: result,
   });
 });
