@@ -190,3 +190,50 @@ title without any additional text, formatting, or symbols: "${text}"`;
     title: result,
   });
 });
+
+export const aiDescriptionResponse = TryCatch(async (req, res) => {
+  const { title, description } = req.body;
+
+  const prompt =
+    description === ""
+      ? `Generate only one short blog description based on
+this title: "${title}". Your response must be only one sentence, strictly under 30 words, with no options, no
+greetings, and no extra text. Do not explain. Do not say 'here is'. Just return the description only.`
+      : `Fix the
+grammar in the following blog description and return only the corrected sentence. Do not add anything else:
+"${description}"`;
+
+  let result;
+
+  const ai = new GoogleGenAI({
+    apiKey: process.env.GEMINI_API_KEY,
+  });
+  async function generateDescription() {
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: prompt,
+    });
+
+    let rawtext = response.text;
+
+    if (!rawtext) {
+      res.status(400).json({
+        success: false,
+        message: "Failed to generate description",
+      });
+      return;
+    }
+
+    result = rawtext
+      .replace(/\*\*/g, "")
+      .replace(/[\r\n]+/g, "")
+      .replace(/[*_`~]/g, "")
+      .trim();
+  }
+  await generateDescription();
+  res.json({
+    success: true,
+    message: "Description generated successfully",
+    description: result,
+  });
+});
