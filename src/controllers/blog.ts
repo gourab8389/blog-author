@@ -5,6 +5,7 @@ import { invalidateCacheJob } from "../utils/rabbitmq.js";
 import { TryCatch } from "../utils/try-catch.js";
 import cloudinary from "cloudinary";
 import { GoogleGenAI } from "@google/genai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export const createBlog = TryCatch(async (req: AuthenticatedRequest, res) => {
   const { title, description, blogcontent, category } = req.body;
@@ -236,4 +237,55 @@ grammar in the following blog description and return only the corrected sentence
     message: "Description generated successfully",
     description: result,
   });
+});
+
+export const aiBlogResponse = TryCatch(async (req, res) => {
+  const prompt = ` You will act as a grammar correction engine. I will provide you with blog content
+in rich HTML format (from Jodit Editor). Do not generate or rewrite the content with new ideas. Only correct
+grammatical, punctuation, and spelling errors while preserving all HTML tags and formatting. Maintain inline styles,
+image tags, line breaks, and structural tags exactly as they are. Return the full corrected HTML string as output. `;
+
+  const { blog } = req.body;
+  if (!blog) {
+    res.status(400).json({
+      success: false,
+      message: "Blog content is required",
+    });
+    return;
+  }
+
+  const fullMessage = `${prompt}\n\n${blog}`;
+
+  const ai = new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string);
+
+  const model = ai.getGenerativeModel({ model: "gemini-1.5-pro" });
+
+  const result = await model.generateContent({
+    contents: [
+      {
+        role: "user",
+        parts: [
+          {
+            text: fullMessage,
+          },
+        ],
+      },
+    ],
+  });
+
+  const responseText = await result.response.text();
+
+  const cleanedHtml = responseText
+    .replace(/^(html| ```html|```)\n?/i, "")
+    .replace(/```$/i, "")
+    .replace(/\*\*/g, "")
+    .replace(/[\r\n]+/g, "")
+    .replace(/[*_`~]/g, "")
+    .trim();
+
+  res.status(200).json({
+    success: true,
+    message: "Content generated successfully",
+    html: cleanedHtml,
+  })
 });
