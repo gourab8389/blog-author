@@ -258,7 +258,7 @@ image tags, line breaks, and structural tags exactly as they are. Return the ful
 
   const ai = new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string);
 
-  const model = ai.getGenerativeModel({ model: "gemini-1.5-pro" });
+  const model = ai.getGenerativeModel({ model: "gemini-1.5-flash" });
 
   const result = await model.generateContent({
     contents: [
@@ -276,7 +276,9 @@ image tags, line breaks, and structural tags exactly as they are. Return the ful
   const responseText = await result.response.text();
 
   const cleanedHtml = responseText
-    .replace(/^(html| ```html|```)\n?/i, "")
+    .replace(/^```html\s*/i, "")
+    .replace(/```\s*$/i, "")
+    .replace(/^html\s*/i, "")
     .replace(/```$/i, "")
     .replace(/\*\*/g, "")
     .replace(/[\r\n]+/g, "")
@@ -287,5 +289,5 @@ image tags, line breaks, and structural tags exactly as they are. Return the ful
     success: true,
     message: "Content generated successfully",
     html: cleanedHtml,
-  })
+  });
 });
